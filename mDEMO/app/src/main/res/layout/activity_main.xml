@@ -7,6 +7,14 @@
     tools:context=".MainActivity"
     >
 
+
+    <ImageView
+        android:src="@drawable/test_photo"
+        android:id="@+id/iv_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@id/ll_bottomNavigation"
+        />
     <com.bozee.mdemo.mySurfaceView
         android:id="@+id/sv_drawingBoard"
         android:layout_width="match_parent"
@@ -44,6 +52,13 @@
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="清空"
+            />
+
+        <Button
+            android:id="@+id/bt_holdAndShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="隐藏"
             />
 
     </LinearLayout>

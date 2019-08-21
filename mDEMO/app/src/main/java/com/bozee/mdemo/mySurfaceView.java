@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback,Runnable {
 
@@ -72,19 +74,20 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private static void initBorad(){
         /*白板初始化*/
         mCanvas = mSurfaceHolder.lockCanvas();  //实际执行SurfaceHolder(dirty),返回Canvas用于dirty矩形区域绘制，
-        mCanvas.drawColor(Color.BLACK); //画板颜色
+        mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         //第一次绘制
         if (mCanvas != null){
             mSurfaceHolder.unlockCanvasAndPost(mCanvas);
         }
-        //第一次绘制
+        //第二次绘制
         Canvas mCanvas2 = mSurfaceHolder.lockCanvas();  //实际执行SurfaceHolder(dirty),返回Canvas用于dirty矩形区域绘制，
-        mCanvas2.drawColor(Color.BLACK); //画板颜色
+        mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         if (mCanvas != null){
             mSurfaceHolder.unlockCanvasAndPost(mCanvas2);
         }
 
         Canvas canvas = mSurfaceHolder.lockCanvas(new Rect(0, 0, 0, 0));
+
         mSurfaceHolder.unlockCanvasAndPost(canvas);
     }
 
@@ -93,8 +96,12 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void run() {
         while (startDraw){
-            /*绘制图案*/
-            draw();
+
+            while (MainActivity.drawingBoardStatus == View.VISIBLE){
+                /*绘制图案*/
+                draw();
+            }
+
         }
     }
 
@@ -123,6 +130,9 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         eraserPaint.setStrokeWidth(20);
         eraserPaint.setColor(Color.WHITE);
 
+
+        setZOrderOnTop(true);//设置画布  背景透明
+        mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
         setFocusable(true); //可获取焦点
         setFocusableInTouchMode(true);
 
@@ -137,19 +147,16 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         mCanvas = mSurfaceHolder.lockCanvas();  //实际执行SurfaceHolder(dirty),返回Canvas用于dirty矩形区域绘制，
         // mSurfaceLock是一个ReentrantLock，是一个可重入互斥锁
 
-
-
-
         switch (MainActivity.UtilSelector){
 
             case 1 :{
                 mCanvas.drawPath(mPath,mPaint);
-                Log.i("TAG_status:",MainActivity.UtilSelector+"");
+                //Log.i("TAG_status:",MainActivity.UtilSelector+"");
                 break;
             }
             case 2 :{
                 mCanvas.drawPath(mPath,eraserPaint);
-                Log.i("TAG_status:",MainActivity.UtilSelector+"");
+                //Log.i("TAG_status:",MainActivity.UtilSelector+"");
                 break;
             }
         }
@@ -170,7 +177,7 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             case MotionEvent.ACTION_DOWN:
                 startX = x;
                 startY = y;
-                mPath.reset();
+                //mPath.reset();
                 mPath.moveTo(x, y);//将 Path 起始坐标设为手指按下屏幕的坐标
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -195,7 +202,6 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 startY = y;
                 break;
             case MotionEvent.ACTION_UP:
-                //mPath.reset();
                 break;
         }
         return true;
