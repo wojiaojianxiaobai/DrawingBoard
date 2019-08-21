@@ -25,7 +25,7 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private static Canvas mCanvas;
 
     /*控制子线程*/
-    private boolean startDraw;
+    public static boolean startDraw;
 
     /*Path 路径实例*/
     public static Path mPath = new Path();
@@ -128,12 +128,13 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         eraserPaint.setStyle(Paint.Style.STROKE);
         eraserPaint.setStrokeJoin(Paint.Join.ROUND);        //拐角属性： ROUND：圆 MITER:尖角
         eraserPaint.setStrokeWidth(20);
-        eraserPaint.setColor(Color.WHITE);
 
 
-        setZOrderOnTop(true);//设置画布  背景透明
-        mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
+        setZOrderOnTop(true);
+        mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);//设置画布  背景透明
         setFocusable(true); //可获取焦点
+
+
         setFocusableInTouchMode(true);
 
         this.setKeepScreenOn(true); //设置长亮
@@ -150,12 +151,18 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         switch (MainActivity.UtilSelector){
 
             case 1 :{
-                mCanvas.drawPath(mPath,mPaint);
+                if (startDraw){
+                    mCanvas.drawPath(mPath,mPaint);
+                }
+
                 //Log.i("TAG_status:",MainActivity.UtilSelector+"");
                 break;
             }
             case 2 :{
-                mCanvas.drawPath(mPath,eraserPaint);
+                if (startDraw){
+                    mCanvas.drawPath(mPath,eraserPaint);
+                }
+
                 //Log.i("TAG_status:",MainActivity.UtilSelector+"");
                 break;
             }

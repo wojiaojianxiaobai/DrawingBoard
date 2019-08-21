@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -14,6 +16,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button paint;       //画笔
     private Button holdAndShow; //显示和隐藏笔记
     private mySurfaceView drawingBoard;    //画板窗口
+    private ImageView background;   //背景图片
 
     public static int drawingBoardStatus;  //画板显示/隐藏状态
 
@@ -33,11 +36,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         paint = findViewById(R.id.bt_paint);
         holdAndShow = findViewById(R.id.bt_holdAndShow);
         drawingBoard = findViewById(R.id.sv_drawingBoard);
+        background = findViewById(R.id.iv_background);
 
         cleanDraw.setOnClickListener(this);
         eraser.setOnClickListener(this);
         paint.setOnClickListener(this);
         holdAndShow.setOnClickListener(this);
+        background.setOnClickListener(this);
 
 
     }
@@ -70,14 +75,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (drawingBoard.getVisibility() == View.VISIBLE){
                     drawingBoard.setVisibility(View.INVISIBLE);
                     drawingBoardStatus = View.INVISIBLE;
+                    holdAndShow.setText("显示");
+                    mySurfaceView.startDraw = false;
                     Log.i("TAG_Visibility","GONE");
                 }else {
                     drawingBoard.setVisibility(View.VISIBLE);
                     drawingBoardStatus = View.VISIBLE;
+                    mySurfaceView.startDraw = true;
+                    holdAndShow.setText("隐藏");
                     Log.i("TAG_Visibility","VISIBLE");
                 }
                 break;
 
+            }
+
+            case R.id.iv_background :{
+                Toast.makeText(MainActivity.this,"this is background",Toast.LENGTH_SHORT).show();
+                Log.i("TAG_","this is background");
             }
         }
 
