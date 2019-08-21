@@ -39,16 +39,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()){
 
             case R.id.bt_cleanDraw :{
+                mySurfaceView.mPath.reset();
                 mySurfaceView.reset();
                 break;
             }
 
             case R.id.bt_paint :{
+                mySurfaceView.mPath.reset();
                 UtilSelector = paintStatus;
                 break;
             }
 
             case R.id.bt_eraser :{
+                mySurfaceView.mPath.reset();
                 UtilSelector = eraserStatus;
                 break;
             }
