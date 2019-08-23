@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button eraser;      //橡皮擦
     private Button paint;       //画笔
     private Button holdAndShow; //显示和隐藏笔记
+    private Button reAction;      //撤销操作
     private mySurfaceView drawingBoard;    //画板窗口
     private ImageView background;   //背景图片
 
@@ -37,12 +38,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         holdAndShow = findViewById(R.id.bt_holdAndShow);
         drawingBoard = findViewById(R.id.sv_drawingBoard);
         background = findViewById(R.id.iv_background);
+        reAction = findViewById(R.id.reAciton);
 
         cleanDraw.setOnClickListener(this);
         eraser.setOnClickListener(this);
         paint.setOnClickListener(this);
         holdAndShow.setOnClickListener(this);
         background.setOnClickListener(this);
+        reAction.setOnClickListener(this);
 
 
     }
@@ -92,8 +95,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.iv_background :{
                 Toast.makeText(MainActivity.this,"this is background",Toast.LENGTH_SHORT).show();
                 Log.i("TAG_","this is background");
+                break;
+            }
+
+            case R.id.reAciton :{
+                mySurfaceView.back();
+               // mySurfaceView.MyPathList.remove(mySurfaceView.MyPathList.size()-1);
             }
         }
 
     }
+
+
 }
