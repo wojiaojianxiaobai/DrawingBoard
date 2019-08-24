@@ -6,10 +6,16 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class Action {
 
     public int color;
+    public Path path;  //路径
     Action(){
         color = Color.RED;
     }
@@ -26,15 +32,21 @@ public abstract class Action {
 
 /*画曲线*/
 class MyPath extends Action{
-    Path path;  //路径
+
+    public static List<Path> pathLists = new ArrayList<>();     //路径数组
+    public static int index;        //记录是第几个Action
+    private String nPath = "";
+
+    public Path path;  //路径
     int size;   //画笔大小
 
-    MyPath(float x, float y, int size, int color) {
+
+
+    MyPath(float x, float y, int size, int color,int index) {
         super(color);
         path = new Path();
         this.size = size;
         path.moveTo(x,y);
-        //path.lineTo(x, y);
     }
 
     /*画笔*/
@@ -48,6 +60,15 @@ class MyPath extends Action{
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
         canvas.drawPath(path,paint);
+
+
+        if (nPath.equals(path.toString())){
+        }else {
+            pathLists.add(path);
+            nPath = path.toString();
+        }
+
+        Log.i("TAG_","path:" + pathLists.toString());
     }
 
 
@@ -70,6 +91,7 @@ class MyPath extends Action{
     public void move(float mx, float my,float x,float y) {
         //path.lineTo(mx, my);
         path.quadTo(mx, my, x,y);
+
     }
 
 

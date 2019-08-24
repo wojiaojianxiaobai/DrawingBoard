@@ -71,6 +71,14 @@
             android:text="撤销"
             />
 
+
+        <Button
+            android:id="@+id/bt_classEraser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="对象擦"
+            />
+
     </LinearLayout>
 
 

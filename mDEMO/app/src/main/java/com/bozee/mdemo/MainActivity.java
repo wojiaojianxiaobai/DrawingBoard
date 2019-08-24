@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button reAction;      //撤销操作
     private mySurfaceView drawingBoard;    //画板窗口
     private ImageView background;   //背景图片
+    private Button classEraser;      //对象擦
 
     public static int drawingBoardStatus;  //画板显示/隐藏状态
 
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /*工具选择器*/
     private static int paintStatus = 1;     //选择画笔
     private static int eraserStatus = 2;   //选择橡皮擦
+    private static int classEraserStatus = 3;     //选择对象擦
     public static int UtilSelector = paintStatus;  //默认选择画笔
 
     @Override
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         drawingBoard = findViewById(R.id.sv_drawingBoard);
         background = findViewById(R.id.iv_background);
         reAction = findViewById(R.id.reAciton);
+        classEraser = findViewById(R.id.bt_classEraser);
 
         cleanDraw.setOnClickListener(this);
         eraser.setOnClickListener(this);
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         holdAndShow.setOnClickListener(this);
         background.setOnClickListener(this);
         reAction.setOnClickListener(this);
+        classEraser.setOnClickListener(this);
 
 
     }
@@ -101,6 +105,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.reAciton :{
                 mySurfaceView.back();
                // mySurfaceView.MyPathList.remove(mySurfaceView.MyPathList.size()-1);
+                break;
+            }
+            case R.id.bt_classEraser :{
+                mySurfaceView.mPath.reset();
+                UtilSelector = classEraserStatus;
             }
         }
 

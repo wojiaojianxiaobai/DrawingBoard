@@ -9,6 +9,7 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,11 +17,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import androidx.constraintlayout.solver.widgets.Rectangle;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback,Runnable {
+public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
     /*SurfaceHolder 实例*/
     private static SurfaceHolder mSurfaceHolder;
@@ -33,10 +36,6 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     /*Path 路径实例*/
     public static Path mPath = new Path();
-
-    private static Path lastPath = new Path();
-    //private static
-
     /*Paint 画笔实例*/
     private Paint mPaint = new Paint();
 
@@ -44,15 +43,12 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private Paint eraserPaint;
 
     /*记录画笔的列表*/
-    private static List<Action> mActions;      //操作集合
+    private static List<Action> mActions = new ArrayList<>();      //操作集合
     private Action singoAction = null;  //单次操作
-    private  HashMap<String,Object> myOption ;  //记录单次操作为画笔\橡皮檫
-    private static List<HashMap> optionList = new ArrayList();
+    private  HashMap<String,Object> myOption ;  //记录单次操作类型为画笔\橡皮檫
+    private static List<HashMap> optionList = new ArrayList<HashMap>();
 
-
-    public static List<HashMap> MyPathList = new ArrayList<>();   //路线集合
-
-
+    public static List<Path> pathLists = new ArrayList<>();     //路径数组
 
     float startX ;
     float startY ;
@@ -70,7 +66,6 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         initBorad();    //白板初始化
         startDraw = true;
         mActions = new ArrayList<Action>();
-        //new Thread(this).start();
 
     }
 
@@ -106,18 +101,6 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     }
 
 
-    /*Runnable*/
-    @Override
-    public void run() {
-        while (startDraw){
-
-            while (MainActivity.drawingBoardStatus == View.VISIBLE){
-                /*绘制图案*/
-                draw();
-            }
-
-        }
-    }
 
     /*初始化控件*/
     private void initView(){
@@ -155,48 +138,7 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
-    private void draw(){
 
-
-        /*画笔初始化*/
-        mCanvas = mSurfaceHolder.lockCanvas();  //实际执行SurfaceHolder(dirty),返回Canvas用于dirty矩形区域绘制，
-        // mSurfaceLock是一个ReentrantLock，是一个可重入互斥锁
-
-        switch (MainActivity.UtilSelector){
-
-            case 1 :{
-
-                if (startDraw){
-
-                    mCanvas.drawColor(Color.WHITE);
-                    if (MyPathList != null && MyPathList.size()>= 1){
-                        for (int i = 0; i < MyPathList.size(); i++){
-                            mCanvas.drawPath((Path) MyPathList.get(i).get("path"),mPaint);
-                        }
-                        //mSurfaceHolder.unlockCanvasAndPost(canvas1);
-
-                    }
-
-                    //mCanvas.drawPath(mPath,mPaint);
-                }
-
-                //Log.i("TAG_status:",MainActivity.UtilSelector+"");
-                break;
-            }
-            case 2 :{
-                if (startDraw){
-                    mCanvas.drawPath(mPath,eraserPaint);
-                }
-
-                //Log.i("TAG_status:",MainActivity.UtilSelector+"");
-                break;
-            }
-        }
-        /*对画布内容进行提交*/
-        if (mCanvas != null){
-            mSurfaceHolder.unlockCanvasAndPost(mCanvas);
-        }
-    }
 
 
 
@@ -205,41 +147,41 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         int action = event.getAction();
         float touchX = event.getX();
         float touchY = event.getY();
+
+
+
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 startX = touchX;
                 startY = touchY;
-                //mPath.reset();
-                //mPath.moveTo(touchX, touchY);//将 Path 起始坐标设为手指按下屏幕的坐标
-                singoAction = new MyPath(touchX, touchY,10, Color.RED);     //设置画笔起始位置和属性
+                singoAction = new MyPath(touchX, touchY,10, Color.RED,mActions.size());     //设置画笔起始位置和属性
                 break;
             case MotionEvent.ACTION_MOVE:
 
 
-                switch (MainActivity.UtilSelector){     //画笔
+                switch (MainActivity.UtilSelector){
+
+                    /*画笔*/
                     case 1 :{
                         Canvas canvas = mSurfaceHolder.lockCanvas();
-
-
-
                         for (int i = 0; i < mActions.size();i++){
                             int selecter = (int) optionList.get(i).get("option");
                             if (selecter == 1){     //画笔
+
                                 mActions.get(i).draw(canvas);
                             }else if (selecter == 2){      //橡皮檫
                                 mActions.get(i).eraser(canvas);
                             }
                         }
-/*                        for (Action a:mActions){
-                            a.draw(canvas);
-                        }*/
                         singoAction.move(startX, startY, (touchX + startX) / 2, (touchY + startY) / 2);
                         singoAction.draw(canvas);
                         mSurfaceHolder.unlockCanvasAndPost(canvas);
 
                         break;
                     }
-                    case 2 :{       //橡皮檫
+
+                    /*橡皮檫*/
+                    case 2 :{
                         Canvas canvas = mSurfaceHolder.lockCanvas();
 
                         for (int i = 0; i < mActions.size();i++){
@@ -251,23 +193,88 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                             }
 
                         }
-/*                        for (Action a:mActions){
-                            a.eraser(canvas);
-                        }*/
                         singoAction.move(startX, startY, (touchX + startX) / 2, (touchY + startY) / 2);
                         singoAction.eraser(canvas);
                         mSurfaceHolder.unlockCanvasAndPost(canvas);
                         break;
                     }
+
+                    /*对象擦*/
+                    case 3:{
+
+
+                        /*隐藏线段主要部分，头尾不隐藏*/
+                        /*香蕉检查*/            //TODO
+/*                        if (MyPath.pathLists != null && MyPath.pathLists.size() > 0){
+                            for (int i = 0;i < MyPath.pathLists.size() ; i ++){
+                                Log.i("TAG_mActionSize:",mActions.size() + "");
+                                RectF rectF = new RectF();
+                                Path path = MyPath.pathLists.get(i);
+                                Log.i("TAG_","path" + path);
+                                if (path != null){
+                                    path.computeBounds(rectF,true);
+                                    if (rectF.contains(startX,startY)){
+                                        Canvas erasercanvas = mSurfaceHolder.lockCanvas();
+                                        erasercanvas.drawPath(path,eraserPaint);
+                                        singoAction.eraser(erasercanvas);
+                                        mSurfaceHolder.unlockCanvasAndPost(erasercanvas);
+                                        Log.i("TAG_","ActionSize" + mActions.size());
+                                        Log.i("TAG_","香蕉");
+                                    }
+                                }
+
+                            }
+                        }*/
+
+                        if (MyPath.pathLists != null && MyPath.pathLists.size() > 0){
+                            for (int i = 0;i < MyPath.pathLists.size() ; i ++){
+                                RectF rectF = new RectF();
+                                Path path = MyPath.pathLists.get(i);
+                                if (path != null){
+                                    path.computeBounds(rectF,true);
+                                    if (rectF.contains(startX,startY)){
+                                        initBorad();
+                                        if (mActions != null && mActions.size() >= 1) {
+                                            mActions.remove(i);
+                                            optionList.remove(i);
+                                            MyPath.pathLists.remove(i);
+                                            Canvas canvas = mSurfaceHolder.lockCanvas();
+                                            for (int j = 0; j < optionList.size();j++){
+                                                int selecter = (int) optionList.get(j).get("option");
+                                                if (selecter == 1){     //画笔
+                                                    mActions.get(j).draw(canvas);
+                                                }else if (selecter == 2){      //橡皮檫
+                                                    mActions.get(j).eraser(canvas);
+                                                }
+                                            }
+                                            mSurfaceHolder.unlockCanvasAndPost(canvas);
+                                            return true;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+
+
+                    }
                 }
+
                 startX = touchX;
                 startY = touchY;
+
+
                 break;
             case MotionEvent.ACTION_UP:
-                mActions.add(singoAction);
+
+
                  myOption = new HashMap<>();  //操作集合
                 myOption.put("option",MainActivity.UtilSelector);
-                optionList.add(myOption);
+                if (MainActivity.UtilSelector != 3){
+                    optionList.add(myOption);
+                    mActions.add(singoAction);
+                }
+
                 Log.i("TAG_","options:" + optionList.toString());
                 singoAction = null;
 
@@ -279,6 +286,9 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     /*重置画布*/
     public static void reset(){
         initBorad();    //白板初始化
+        mActions.clear();
+        MyPath.pathLists.clear();
+        optionList.clear();
     }
 
     /*撤销操作*/
@@ -299,14 +309,13 @@ public class mySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 }
 
             }
-/*            for (Action a : mActions) {
-                a.draw(canvas);
-            }*/
             mSurfaceHolder.unlockCanvasAndPost(canvas);
             return true;
         }
         return false;
     }
+
+
 
 
 }
