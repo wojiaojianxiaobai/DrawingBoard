@@ -2,6 +2,7 @@ package com.bozee.mdemo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,7 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button cleanDraw;   //清空画板
     private Button eraser;      //橡皮擦
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private mySurfaceView drawingBoard;    //画板窗口
     private ImageView background;   //背景图片
     private Button classEraser;      //对象擦
+    private Button reClassEraser;   //撤销对象擦
 
     public static int drawingBoardStatus;  //画板显示/隐藏状态
 
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         background = findViewById(R.id.iv_background);
         reAction = findViewById(R.id.reAciton);
         classEraser = findViewById(R.id.bt_classEraser);
+        reClassEraser= findViewById(R.id.reClass);
 
         cleanDraw.setOnClickListener(this);
         eraser.setOnClickListener(this);
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         background.setOnClickListener(this);
         reAction.setOnClickListener(this);
         classEraser.setOnClickListener(this);
+        reClassEraser.setOnClickListener(this);
 
 
     }
@@ -110,6 +114,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_classEraser :{
                 mySurfaceView.mPath.reset();
                 UtilSelector = classEraserStatus;
+                break;
+            }
+            case R.id.reClass : {
+                mySurfaceView.ClassBack();
             }
         }
 

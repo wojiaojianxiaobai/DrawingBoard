@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:background="@android:color/white"
     >
 
 
@@ -32,52 +33,64 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_alignParentEnd="true"
+        android:background="#20202020"
         >
 
 
         <Button
             android:id="@+id/bt_paint"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="画笔"
             />
 
         <Button
             android:id="@+id/bt_eraser"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="橡皮擦"
             />
 
 
         <Button
+            android:id="@+id/reAciton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="撤销"
+            />
+        <Button
+            android:id="@+id/bt_classEraser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="对象擦"
+            />
+
+        <Button
+            android:id="@+id/reClass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="撤销对象擦"
+            />
+
+        <Button
             android:id="@+id/bt_cleanDraw"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="清空"
             />
 
         <Button
+
             android:id="@+id/bt_holdAndShow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
             android:text="隐藏"
             />
 
-        <Button
-            android:id="@+id/reAciton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="撤销"
-            />
 
 
-        <Button
-            android:id="@+id/bt_classEraser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="对象擦"
-            />
+
+
 
     </LinearLayout>
 
